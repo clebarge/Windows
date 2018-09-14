@@ -1,6 +1,7 @@
 # Windows
 
 Get-ADUserStatistics.ps1: Connects to Active Directory and gathers information about a user, members of a group, users in an OU, or all users in the domain.
+
 Get-ADUserStatistics.ps1
     [-UserName] <string>
     [-Path] <string>
@@ -18,6 +19,7 @@ Get-ADUserStatistics.ps1
     [-Path] <string>
   
   Get-RemoteIPConfig.ps1: Connects to Active Directory and gathers IP configuration from remote computers.
+  
   Get-RemoteIPConfig
     [-ComputerName] <string>
     [-Path] <string>
