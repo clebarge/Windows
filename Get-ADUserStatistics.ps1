@@ -59,16 +59,16 @@ $Users = Get-ADUser -Filter *
 foreach($user in $users)
 {
 $samAccountName = $User.samAccountName
-$BasicAttributes = Get-ADUser -Filter "samAccountName -like '*$samAccountName*'" -Properties * | Select-Object AccountExpires,@{N='BadPasswordTime'; E={[DateTime]::FromFileTime($_.BadPasswordTime)}},Company,Description,DisplayName,DistinguishedName, `
+$BasicAttributes = Get-ADUser -Filter "samAccountName -eq '$samAccountName'" -Properties * | Select-Object @{N='BadPasswordTime'; E={[DateTime]::FromFileTime($_.BadPasswordTime)}},Company,Description,DisplayName,DistinguishedName, `
 LastLogonDate,LogonCount,EMailAddress,SamAccountName,UserPrincipalName,Name,PasswordLastSet,Created,Modified,Enabled,PasswordNeverExpires, `
-@{N='AccountExpirationDate'; E={[DateTime]::FromFileTime($_.AccountExpirationDate)}},Country,HomeDrive,Manager,OfficePhone,PasswordExpired,PasswordNotRequired,Title,CannotChangePassword
+@{N='AccountExpires'; E={[DateTime]::FromFileTime($_.AccountExpires)}},Country,HomeDrive,Manager,OfficePhone,PasswordExpired,PasswordNotRequired,Title,CannotChangePassword
 
 $OU = $BasicAttributes.DistinguishedName -replace '^.+?(?<!\\),',''
 
-[string]$LogonWorkstations = Get-ADUser -Filter "samAccountName -like '*$samAccountName*'" -Properties * | Select-Object -ExpandProperty LogonWorkstations
+[string]$LogonWorkstations = Get-ADUser -Filter "samAccountName -eq '$samAccountName'" -Properties * | Select-Object -ExpandProperty LogonWorkstations
 
     #expanding out the groups, only wanting to get group name.
-    $Groups = Get-ADUser -Filter "samAccountName -like '*$samAccountName*'" -Properties * | Select-Object -ExpandProperty Memberof
+    $Groups = Get-ADUser -Filter "samAccountName -eq '$samAccountName'" -Properties * | Select-Object -ExpandProperty Memberof
     $MemberOf = New-Object 'System.Collections.Generic.List[system.object]'
     foreach($group in $groups)
     {
@@ -81,7 +81,6 @@ $OU = $BasicAttributes.DistinguishedName -replace '^.+?(?<!\\),',''
 
 
     New-Object -TypeName PSObject -Property @{
-        AccountExpires = $BasicAttributes.AccountExpires
         BadPasswordTime = $BasicAttributes.BadPasswordTime
         Company = $BasicAttributes.Company
         Description = $BasicAttributes.Description
@@ -98,7 +97,7 @@ $OU = $BasicAttributes.DistinguishedName -replace '^.+?(?<!\\),',''
         Modified = $BasicAttributes.Modified
         Enabled = $BasicAttributes.Enabled
         PasswordNeverExpires = $BasicAttributes.PasswordNeverExpires
-        AccountExpirationDate = $BasicAttributes.AccountExpirationDate
+        AccountExpires = $BasicAttributes.AccountExpires
         Country = $BasicAttributes.Country
         HomeDrive = $BasicAttributes.HomeDrive
         Manager = $BasicAttributes.Manager
