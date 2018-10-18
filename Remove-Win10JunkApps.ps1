@@ -12,9 +12,16 @@ NOTE: This runs as the user and only impacts the individual user's start menu an
 This utility has no parameters as it is intended to be used by administrators in login scripts.
 All variables must derive from the running environment, or be configured in this script.
 
+How to use:
+    1. Copy this file to the NETLOGON share on your domain controller, or to another location on the network.
+    2. Create or modify a Group Policy object which will apply to the user account.
+        a. Under Login Scripts, set this script as a PowerShell Script.
+        b. You may also embed this in a traditional command line login script with this line:
+            powershell.exe -nologo -file %logonserver%\NetLogon\Remove-Win10JunkApps.ps1 -windowstyle hidden -noprofile -executionpolicy bypass
+
 Author: Clark B. Lebarge
 Company: Long View Systems
-Version: 1.0.10172018
+Version: 1.0.10182018
 
 #>
 
