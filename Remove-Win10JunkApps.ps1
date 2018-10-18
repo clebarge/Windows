@@ -13,8 +13,10 @@ This utility has no parameters as it is intended to be used by administrators in
 All variables must derive from the running environment, or be configured in this script.
 
 How to use:
-    1. Copy this file to the NETLOGON share on your domain controller, or to another location on the network.
-    2. Create or modify a Group Policy object which will apply to the user account.
+    1. Modify the list of junk apps in this script to be specific to your environment, setting to Remove those apps you don't want.
+        a. You can add more apps simply by copying the format. You may need to do this as the recommended apps that are installed do change.
+    2. Copy this file to the NETLOGON share on your domain controller, or to another location on the network.
+    3. Create or modify a Group Policy object which will apply to the user account.
         a. Under Login Scripts, set this script as a PowerShell Script.
         b. You may also embed this in a traditional command line login script with this line:
             powershell.exe -nologo -file %logonserver%\NetLogon\Remove-Win10JunkApps.ps1 -windowstyle hidden -noprofile -executionpolicy bypass
