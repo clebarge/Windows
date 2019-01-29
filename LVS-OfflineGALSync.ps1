@@ -116,7 +116,7 @@ Modify on each source/target domain.
 
         #These attributes will be imported, or attempted to be imported.
         #You may wish to review which attributes you export and import.
-        $importAttributes = 'company','givenName','mobile','postalCode','sn','st','streetAddress','telephoneNumber','title','c','co','l','facsimileTelephoneNumber','physicalDeliveryOfficeName'
+        $importAttributes = 'mail','company','givenName','mobile','postalCode','sn','st','streetAddress','telephoneNumber','title','c','co','l','facsimileTelephoneNumber'
 
 <#
 ------------Script Body------------
@@ -225,7 +225,7 @@ IF($testMode -eq $true){Start-Sleep 5}ELSE{Start-Sleep 120}
         $arrUserMail = @()
         $arrContactMail = @()
 
-        $objTargetDC = try{Get-ADDomainController -Discover -DomainName $env:USERDNSDOMAIN -ErrorAction Stop}catch{write-host "A problem occured while searching for a domain controller. Aborting.";return}
+        $objTargetDC = try{Get-ADDomainController -Writable -Discover -DomainName $env:USERDNSDOMAIN -ErrorAction Stop}catch{write-host "A problem occured while searching for a domain controller. Aborting.";return}
         $targetDC = [string]$objTargetDC.HostName
 
         foreach ($user in $colUsers)
@@ -290,10 +290,10 @@ IF($testMode -eq $true){Start-Sleep 5}ELSE{Start-Sleep 120}
 
             # Create Contact Object
             IF($testMode){
-                try{New-ADObject -name $user.displayName -DisplayName $user.displayName -type contact -Path $OUPath -Description $user.description -server $targetDC -OtherAttributes $hashAttribs -WhatIf}catch{write-host "A problem may have occurred while creating contact for $user.displayname.";continue}    
+                try{New-ADObject -name $user.displayName -DisplayName $user.displayName -type contact -Path $OUPath -Description $user.description -server $targetDC -OtherAttributes $hashAttribs -WhatIf -ErrorAction Stop}catch{write-host "A problem may have occurred while creating contact for $user.displayname.";continue}    
                 }
             ELSE{
-                try{New-ADObject -name $user.displayName -DisplayName $user.displayName -type contact -Path $OUPath -Description $user.description -server $targetDC -OtherAttributes $hashAttribs}catch{write-host "A problem occurred while creating contact for $user.displayname. Skipping.";continue}
+                try{New-ADObject -name $user.displayName -DisplayName $user.displayName -type contact -Path $OUPath -Description $user.description -server $targetDC -OtherAttributes $hashAttribs -ErrorAction Stop}catch{write-host "A problem occurred while creating contact for $user.displayname. Skipping.";continue}
                 }
         # Exchange - Run update-recipient to ensure contact is Exchange-enabled. Skipped if running in test mode.
         IF(!$testMode){
@@ -315,7 +315,7 @@ IF($testMode -eq $true){Start-Sleep 5}ELSE{Start-Sleep 120}
 
             $strFilter = "targetAddress -eq ""SMTP:" + $user.mail + """"
             
-            $colContacts = try{Get-ADObject -Filter $strFilter -searchbase $OUPath -server $targetDC -Properties *}catch{write-host "An error occured reading contacts from AD. Aborting.";return}
+            $colContacts = try{Get-ADObject -Filter $strFilter -searchbase $OUPath -server $targetDC -Properties $importAttributes -ErrorAction Stop}catch{write-host "An error occured reading contacts from AD. Aborting.";return}
             
             foreach ($contact in $colContacts)
             {
