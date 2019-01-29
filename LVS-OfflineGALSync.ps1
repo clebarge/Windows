@@ -116,7 +116,7 @@ Modify on each source/target domain.
 
         #These attributes will be imported, or attempted to be imported.
         #You may wish to review which attributes you export and import.
-        $importAttributes = 'mail','company','givenName','mobile','postalCode','sn','st','streetAddress','telephoneNumber','title','c','co','l','facsimileTelephoneNumber'
+        $importAttributes = 'mail','company','givenName','mobile','postalCode','sn','st','streetAddress','telephoneNumber','title','c','co','l','facsimileTelephoneNumber','physicalDeliveryOfficeName'
 
 <#
 ------------Script Body------------
@@ -285,7 +285,7 @@ IF($testMode -eq $true){Start-Sleep 5}ELSE{Start-Sleep 120}
 
             foreach ($attrib in $importAttributes)
             {
-                if ($null -ne $user.attrib -and $user.$attrib.length -ge "1") { $hashAttribs.add($attrib, $user.$attrib) }
+                if ($null -ne $user.$attrib -and $user.$attrib.length -ge "1") { $hashAttribs.add($attrib, $user.$attrib) }
             }
 
             # Create Contact Object
@@ -322,7 +322,7 @@ IF($testMode -eq $true){Start-Sleep 5}ELSE{Start-Sleep 120}
                 $hashAttribs = @{}
                 foreach ($attrib in $importAttributes)
                 {
-                    if ($null -ne $user.attrib -and $user.$attrib.length -ge "1" -and $user.$attrib -ne $contact.$attrib)
+                    if ($null -ne $user.$attrib -and $user.$attrib.length -ge "1" -and $user.$attrib -ne $contact.$attrib)
                     {
                         write-host "	Changing " $attrib
                         write-host "		Before: " $contact.$attrib
