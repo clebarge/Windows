@@ -47,7 +47,7 @@ Author: Clark B. Lebarge
 Company: Long View Systems
 Web: https://www.longviewsystems.com
 Email: clark.lebarge@lvs1.com
-Version: 1.1.01242019
+Version: 1.1.20190129
 
 #>
 
@@ -116,7 +116,7 @@ Modify on each source/target domain.
 
         #These attributes will be imported, or attempted to be imported.
         #You may wish to review which attributes you export and import.
-        $importAttributes = 'description','displayName','company','givenName','mobile','postalAddress','postalCode','sn','st','streetAddress','telephoneNumber','title' ,'mail','c','co','l','facsimileTelephoneNumber','physicalDeliveryOfficeName'
+        $importAttributes = 'company','givenName','mobile','postalCode','sn','st','streetAddress','telephoneNumber','title','c','co','l','facsimileTelephoneNumber','physicalDeliveryOfficeName'
 
 <#
 ------------Script Body------------
@@ -290,10 +290,10 @@ IF($testMode -eq $true){Start-Sleep 5}ELSE{Start-Sleep 120}
 
             # Create Contact Object
             IF($testMode){
-                try{New-ADObject -name $user.displayName -type contact -Path $OUPath -Description $user.description -server $targetDC -OtherAttributes $hashAttribs -WhatIf}catch{write-host "A problem may have occurred while creating contact for $user.displayname.";continue}    
+                try{New-ADObject -name $user.displayName -DisplayName $user.displayName -type contact -Path $OUPath -Description $user.description -server $targetDC -OtherAttributes $hashAttribs -WhatIf}catch{write-host "A problem may have occurred while creating contact for $user.displayname.";continue}    
                 }
             ELSE{
-                try{New-ADObject -name $user.displayName -type contact -Path $OUPath -Description $user.description -server $targetDC -OtherAttributes $hashAttribs}catch{write-host "A problem occurred while creating contact for $user.displayname. Skipping.";continue}
+                try{New-ADObject -name $user.displayName -DisplayName $user.displayName -type contact -Path $OUPath -Description $user.description -server $targetDC -OtherAttributes $hashAttribs}catch{write-host "A problem occurred while creating contact for $user.displayname. Skipping.";continue}
                 }
         # Exchange - Run update-recipient to ensure contact is Exchange-enabled. Skipped if running in test mode.
         IF(!$testMode){
